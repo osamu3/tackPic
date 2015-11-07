@@ -233,7 +233,7 @@
 			this.btnCallSeverHub.Name = "btnCallSeverHub";
 			this.btnCallSeverHub.Size = new System.Drawing.Size(196, 23);
 			this.btnCallSeverHub.TabIndex = 5;
-			this.btnCallSeverHub.Text = "デバッグ用：Nothig";
+			this.btnCallSeverHub.Text = "デバッグ用：[Nothig]";
 			this.btnCallSeverHub.UseVisualStyleBackColor = true;
 			this.btnCallSeverHub.Click += new System.EventHandler(this.btnCallSeverHub_Click);
 			// 

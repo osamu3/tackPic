@@ -213,9 +213,10 @@ namespace takepic {
 							_HubProxy.Invoke("PhotChange", fileUnqNm).Wait();
 						};
 
-						Uri u = new Uri("" + fileUnqNm);
+						//Uri u = new Uri("" + fileUnqNm);
+
 						//認証設定
-						wc.Credentials = new NetworkCredential(@"", "");
+//						wc.Credentials = new NetworkCredential(@"", "");
 
 						Console.WriteLine("写真画像FTPアップロード開始");
 						wc.UploadDataAsync(u, image.Buffer);
@@ -357,7 +358,8 @@ namespace takepic {
 		protected override void OnClosing(CancelEventArgs e) {
 			// Disable live view (in case it's enabled)
 			if (_Device != null) {
-				_Device.LiveViewEnabled = false;
+				if (_Device.LiveViewEnabled) 
+					_Device.LiveViewEnabled = false;
 			}
 
 			// Shut down the Nikon manager
