@@ -31,6 +31,8 @@ namespace takepic {
 		private HubConnection _HubConnection;
 		private IHubProxy _HubProxy;
 
+		private string FtpCredentials = "";
+
 
 		public Form1() {
 			InitializeComponent();
@@ -214,9 +216,11 @@ namespace takepic {
 						};
 
 						//Uri u = new Uri("" + fileUnqNm);
+						Uri u = new Uri("ftp://waws-prod-os1-001.ftp.azurewebsites.windows.net/site/wwwroot/images/" + fileUnqNm);
 
 						//認証設定
 //						wc.Credentials = new NetworkCredential(@"", "");
+						wc.Credentials = new NetworkCredential(@"picUpSignalR\$picUpSignalR", FtpCredentials);
 
 						Console.WriteLine("写真画像FTPアップロード開始");
 						wc.UploadDataAsync(u, image.Buffer);
@@ -235,6 +239,7 @@ namespace takepic {
 			NikonLiveViewImage image = null;
 
 			try {
+				//ここんとこ、修正必要かも。_Device.GetLiveViewImage()を呼び出す前にnullかどうか確認してくださいとのこと
 				image = _Device.GetLiveViewImage();
 			} catch (NikonException) {
 				_LiveViewTimer.Stop();
@@ -280,18 +285,21 @@ namespace takepic {
 						//アップロード完了時イベントを登録
 						wc.UploadDataCompleted += (s, ev) => {
 							Console.WriteLine("アップロード完了");
-							_HubProxy.Invoke("PhotChange", _LiveViewImgFlNm).Wait();
+							//ファイル名に、"?"+時間を付け加えて送信することで、同名ファイルでも異なるファイルとブラウザに認識させる。
+							_HubProxy.Invoke("PhotChange", _LiveViewImgFlNm+"?"+DateTime.Now.Millisecond.ToString()).Wait();
 						};
 
-						Uri u = new Uri("" + _LiveViewImgFlNm);
+						Uri u = new Uri("ftp://waws-prod-os1-001.ftp.azurewebsites.windows.net/site/wwwroot/images/" + _LiveViewImgFlNm);
 						//認証設定
-						wc.Credentials = new NetworkCredential();
+						wc.Credentials = new NetworkCredential(@"picUpSignalR\$picUpSignalR", FtpCredentials);
 
 						Console.WriteLine("写真画像FTPアップロード開始");
 						wc.UploadDataAsync(u, image.JpegBuffer);
+
 					} catch (Exception ex) {
-						//MessageBox.Show(ex.ToString());
+						MessageBox.Show(ex.ToString());
 						Console.WriteLine("err:" + ex.Message + " 写真画像FTPアップロード失敗!");
+
 					}
 				}
 				#endregion
